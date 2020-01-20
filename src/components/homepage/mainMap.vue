@@ -1,19 +1,21 @@
 <template>
   <l-map
-    class="elevation-2"
     :style="$vuetify.breakpoint.mdAndUp ? 'height:500px;' : 'height:350px;'"
     :options="{scrollWheelZoom:false, zoomControl: false}"
     :zoom="zoom"
     :center="center"
     style="z-index: 5;"
+    ref="mapElement"
+    id="mapid"
   >
-    <l-control-scale position="bottomleft" :imperial="true" :metric="false"></l-control-scale>
-    <l-control-zoom position="topright"  ></l-control-zoom>
+    <!-- <l-control-scale position="bottomleft" :imperial="true" :metric="false"></l-control-scale> -->
+    <l-control-zoom position="bottomleft"  ></l-control-zoom>
     <l-tile-layer :url="url" :attribution="attribution"></l-tile-layer>
     <l-geo-json
         v-if="show"
         :geojson="geojson"
       />
+    <!-- <RoutingControl from='{[57.74, 11.94]}' to='{[57.6792, 11.949]}' /> -->
     <div v-if="filterdItems.length === 0">
       <l-marker
         v-for="(elem, index) in geojson"
@@ -121,28 +123,41 @@ import {
   LMap,
   LTileLayer,
   LMarker,
-  LControlScale,
+  // LControlScale,
   LGeoJson,
   LPopup,
   LControlZoom,
   LControl
 } from 'vue2-leaflet';
-// import axios from "axios";
+import L from 'leaflet';
+import 'leaflet-routing-machine';
+import 'lrm-graphhopper';
 
 export default {
   name: 'mainMap',
 
-  created () {
+  mounted () {
+    let mymap = {};
     if (this.getGeoJson.length === 0) {
       this.fetchGeoJson();
     }
+    mymap = this.$refs.mapElement.mapObject;
+    L.Routing.control({
+      router: new L.Routing.GraphHopper('2d392f0a-b556-487b-b072-0f54927a2ea7'),
+      waypoints: [
+        L.latLng(53.0227112, 9.8707054),
+        L.latLng(53.6315628, 10.0069021) // hamburg airpot bus stop Location: 53.6315628, 10.0069021
+      ],
+      routeWhileDragging: true
+    }).addTo(mymap);
+    console.log(mymap)
   },
 
   components: {
     LMap,
     LTileLayer,
     LMarker,
-    LControlScale,
+    // LControlScale,
     LGeoJson,
     LPopup,
     LControlZoom,
