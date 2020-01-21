@@ -132,6 +132,7 @@ import {
 import L from 'leaflet';
 import 'leaflet-routing-machine';
 import 'lrm-graphhopper';
+import 'leaflet-control-geocoder';
 
 export default {
   name: 'mainMap',
@@ -142,15 +143,22 @@ export default {
       this.fetchGeoJson();
     }
     mymap = this.$refs.mapElement.mapObject;
-    L.Routing.control({
+    var geocoder = L.Control.Geocoder.nominatim();
+    var myRoutingControl = L.Routing.control({
       router: new L.Routing.GraphHopper('2d392f0a-b556-487b-b072-0f54927a2ea7'),
       waypoints: [
-        L.latLng(53.0227112, 9.8707054),
-        L.latLng(53.6315628, 10.0069021) // hamburg airpot bus stop Location: 53.6315628, 10.0069021
+        L.latLng(53.6315628, 10.0069021),
+        L.latLng(53.0227112, 9.8707054) // hamburg airpot bus stop Location: 53.6315628, 10.0069021
       ],
-      routeWhileDragging: true
+      routeWhileDragging: true,
+      geocoder: geocoder
     }).addTo(mymap);
     console.log(mymap)
+    var router = myRoutingControl.getRouter();
+    router.on('response', function (e) {
+      console.log('This routing request consumed ' + e.credits + ' credit(s)');
+      console.log('You have ' + e.remaining + ' left');
+    });
   },
 
   components: {
@@ -355,3 +363,8 @@ export default {
   }
 }
 </script>
+<style>
+  @import '../../../node_modules/leaflet/dist/leaflet.css';
+  @import '../../../node_modules/leaflet-routing-machine/dist/leaflet-routing-machine.css';
+  @import '../../../node_modules/leaflet-control-geocoder/dist/Control.Geocoder.css';
+</style>
