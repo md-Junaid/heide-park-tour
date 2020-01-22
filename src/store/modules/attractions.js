@@ -8,11 +8,13 @@ const getters = {
 
 const mutations = {
   mutateFetchAttractions: (state, geojson) => {
-    geojson.forEach(elem => {
-      if (elem.type === "node" && (elem.tags.tourism || elem.tags.attraction)) {
-        state.attractionsGeoJson.push(elem);
-      }
-    });
+    if (state.attractionsGeoJson === []) {
+      geojson.forEach(elem => {
+        if (elem.type === "node" && (elem.tags.tourism || elem.tags.attraction)) {
+          state.attractionsGeoJson.push(elem);
+        }
+      });
+    }
   }
 };
 

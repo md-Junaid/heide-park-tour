@@ -8,7 +8,7 @@
     id="mapid"
   >
     <!-- <l-control-scale position="bottomleft" :imperial="true" :metric="false"></l-control-scale> -->
-    <l-control-zoom position="bottomleft"  ></l-control-zoom>
+    <l-control-zoom position="bottomright"  ></l-control-zoom>
     <l-tile-layer :url="url" :attribution="attribution"></l-tile-layer>
     <l-marker
       v-for="(elem, index) in markers"
@@ -16,7 +16,7 @@
       :lat-lng="computeLatLng(elem.lat, elem.lon)"
     >
       <l-popup>
-        <v-row class="justify-space-between align-center">
+        <!-- <v-row class="justify-space-between align-center"> -->
           <div class="subtitle-1 d-flex text-capitalize font-weight-bold mb-1 ml-3">
             <p v-if="!elem.tags.name">
               {{ elem.tags.amenity }}
@@ -24,8 +24,8 @@
             </p>
             <p v-else>{{ elem.tags.name }}</p>
           </div>
-          <v-btn v-if="getUser.token" x-small color="primary" class="d-flex mr-3 mt-2" @click.stop="editItem(elem)"><v-icon small>mdi-pencil</v-icon></v-btn>
-        </v-row>
+          <v-chip v-if="getUser.token" class="mb-2">id: {{ elem.id }}</v-chip>
+        <!-- </v-row> -->
         <table class="myTableTheme">
           <tbody>
             <tr v-for="(value, key) in elem.tags" :key="key" class="subtitle-2">
@@ -36,7 +36,7 @@
         </table>
       </l-popup>
     </l-marker>
-    <l-control v-if="filterOnMap" position="topleft" >
+    <l-control v-if="filterOnMap" position="topright" >
       <v-combobox
         v-model="filterdItems"
         :items="items"
@@ -70,7 +70,7 @@
 
 <script>
 /* eslint-disable no-undef */
-import { mapGetters, mapActions } from 'vuex';
+import { mapGetters } from 'vuex';
 import {
   LMap,
   LTileLayer,
@@ -99,16 +99,8 @@ export default {
           L.latLng(53.0227112, 9.8707054) // hamburg airpot bus stop Location: 53.6315628, 10.0069021
         ],
         routeWhileDragging: true,
-        geocoder: geocoder
-      }).on('markgeocode', function (e) {
-        var bbox = e.geocode.bbox;
-        var poly = L.polygon([
-          bbox.getSouthEast(),
-          bbox.getNorthEast(),
-          bbox.getNorthWest(),
-          bbox.getSouthWest()
-        ]).addTo(map);
-        map.fitBounds(poly.getBounds());
+        geocoder: geocoder,
+        position: 'topleft'
       }).addTo(mymap);
       var router = myRoutingControl.getRouter();
       router.on('response', function (e) {
@@ -132,7 +124,7 @@ export default {
     return {
       show: true,
       markers: [],
-      center: L.latLng(53.0252, 9.8762), // geo: 53.0252, 9.8762?z=16
+      center: L.latLng(this.centerLat, this.centerLon), // default geo: 53.0252, 9.8762?z=16
       url: 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
       attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
       marker: L.latLng(53.0252, 9.8762),
@@ -182,6 +174,14 @@ export default {
     filterOnMap: {
       type: Boolean,
       default: true
+    },
+    centerLat: {
+      type: Number,
+      default: 53.0252
+    },
+    centerLon: {
+      type: Number,
+      default: 9.8762
     }
   },
 
@@ -193,8 +193,6 @@ export default {
   },
 
   methods: {
-    ...mapActions(['toggleCommonDialog']),
-
     computeLatLng (lat, lon) {
       return L.latLng(lat, lon);
     },
@@ -314,10 +312,6 @@ export default {
         default:
           console.log("Couldn't find place");
       }
-    },
-
-    editItem (elem) {
-      this.toggleCommonDialog({ dialog: true, elem });
     }
   },
 
@@ -350,4 +344,42 @@ export default {
   @import '../../../node_modules/leaflet/dist/leaflet.css';
   @import '../../../node_modules/leaflet-routing-machine/dist/leaflet-routing-machine.css';
   @import '../../../node_modules/leaflet-control-geocoder/dist/Control.Geocoder.css';
+
+table.myTableTheme {
+  border: 1px solid #494949;
+  background-color: #494949;
+  width: 94%;
+  text-align: left;
+  border-collapse: collapse;
+}
+table.myTableTheme td, table.myTableTheme th {
+  /* border: 2px solid #494949; */
+  /* border-radius: 3px; */
+  padding: 10px 5px;
+}
+table.myTableTheme td:first-child {
+  background-color: #494949;
+}
+table.myTableTheme tbody td {
+  font-size: 14px;
+  color: #FFFFFF;
+  max-width: 47%;
+  border: 1px solid #494949;
+}
+table.myTableTheme td:nth-child(even) {
+  background: #8F8F8F;
+}
+table.myTableTheme thead {
+  background: #278AB0;
+}
+table.myTableTheme thead th {
+  font-size: 16px;
+  font-weight: bold;
+  color: #FFFFFF;
+  text-align: center;
+  border-left: 2px solid #398AA4;
+}
+table.myTableTheme thead th:first-child {
+  border-left: none;
+}
 </style>

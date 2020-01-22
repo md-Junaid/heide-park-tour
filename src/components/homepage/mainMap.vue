@@ -16,6 +16,8 @@
       :navigation="true"
       :waypoint-from-lat="53.6315628"
       :waypoint-from-lon="10.0069021"
+      :center-lat="53.0255"
+      :center-lon="9.8792"
       :style="$vuetify.breakpoint.mdAndUp ? 'height:500px;' : 'height:350px;'"
       :geo-locations-markers="markers"
     />
