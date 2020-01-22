@@ -1,4 +1,4 @@
-# heide_park_tour
+# heide_park_tour (Official Website: www.heide-park-tour.herokuapp.com)
 ## Installation
 1. Download and install mongodb(Community version)
 2. Run command `npm install -g vue-cli`
@@ -13,10 +13,10 @@ Open your browser and goto link `localhost:8080` and you should see vue js docum
 
 ## Color palette
 Ivory:       #EAEAE0 (white-greyish)
-Neon Green:  #1DC690 (green)
 Logo Color:  #a5e69d (green) and Ivory
 Navbar Color: #2E7D32 (green darken-3)
-button and text color: #0288D1 (light-blue darken-2)
+buttons: #0288D1 (light-blue darken-2)
+Heading text: #388E3C (green--text text--darken-2)
 links color: #4FC3F7 (light-blue lighten-2)
 footer color: #494949
 app background color: rgba(165, 230, 157, 0.2)

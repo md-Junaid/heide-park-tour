@@ -67,7 +67,7 @@
       </v-toolbar-items>
       <v-menu offset-y v-if="getUser.token">
         <template v-slot:activator="{ on }">
-          <v-avatar size="40" class="ml-5" color="blue darken-2" v-on="on">
+          <v-avatar size="40" class="ml-5" color="light-blue darken-2" v-on="on">
             <v-icon>mdi-account-circle</v-icon>
           </v-avatar>
         </template>
