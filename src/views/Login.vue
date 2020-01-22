@@ -91,13 +91,11 @@
       </v-flex>
     </v-layout>
   </v-container>
-  <commonSnackBar  />
 </v-content>
 </template>
 
 <script>
 import { mapGetters, mapActions } from 'vuex';
-import commonSnackBar from '@/components/common/commonSnackBar';
 
 export default {
   name: 'Login',
@@ -106,10 +104,6 @@ export default {
     if (this.getUser.token) {
       this.$router.push({ name: 'HomePage' });
     }
-  },
-
-  components: {
-    commonSnackBar
   },
 
   data () {

@@ -1,7 +1,6 @@
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
 
-
 // @desc Admin login
 // @route POST
 // @access Admins Only
@@ -11,14 +10,14 @@ exports.adminLogin = async (req, res, next) => {
   const secretKey = req.body.twoFac;
 
   if (secretKey === "heides3cr3t") {
-    User.findOne({ username }).exec(function(err, user) {
+    User.findOne({ username }).exec(function (err, user) {
       if (err) {
         console.log("cannot find user", err);
         res.status(400).json(err);
       } else if (user) {
         if (user.password === password) {
-          var token = jwt.sign({ username: user.username}, 'heides3cr3t', { expiresIn: '40m' });
-          res.status(200).json({success: true, msg: "Successly fully logged in!", token, id: user.id, fullname: user.fullname });
+          var token = jwt.sign({ username: user.username }, 'heides3cr3t', { expiresIn: '6h' });
+          res.status(200).json({ success: true, msg: "Successly fully logged in!", token, id: user.id, fullname: user.fullname });
         } else {
           res.send({
             code: 403,
@@ -41,7 +40,6 @@ exports.adminLogin = async (req, res, next) => {
       msg: "Please input correct Two Factor Auth Code"
     });
   }
-
 };
 
 // Verify token middleware
@@ -50,14 +48,11 @@ exports.verifyToken = (req, res, next) => {
   var bearerHeader = req.headers.authorization;
   if (bearerHeader) {
     // Get token from array
-    var token = req.headers.authorization.split(' ')[1]; 
-    jwt.verify(token, 'heides3cr3t', function(error, decoded) { 
+    var token = req.headers.authorization.split(' ')[1];
+    jwt.verify(token, 'heides3cr3t', function (error, decoded) {
       if (error) {
         console.log(error);
-        res.send({
-          code: 401,
-          msg: "You are not Authorized to do that operation."
-        });
+        return res.status(401).json({ "error": true, "message": 'Expired Token' });
       } else {
         req.user = decoded.username;
         next();

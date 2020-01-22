@@ -3,19 +3,22 @@
     <myNav v-show="showComp"></myNav>
     <router-view id="body-view" />
     <myFooter v-show="showComp" id="footer"/>
+    <commonSnackBar />
   </v-app>
 </template>
 
 <script>
 import myNav from '@/components/common/myNav';
 import myFooter from '@/components/common/myFooter';
+import commonSnackBar from '@/components/common/commonSnackBar';
 
 export default {
   name: 'App',
 
   components: {
     myNav,
-    myFooter
+    myFooter,
+    commonSnackBar
   },
 
   computed: {
