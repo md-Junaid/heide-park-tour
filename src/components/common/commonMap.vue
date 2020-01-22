@@ -46,6 +46,7 @@
         multiple
         hide-selected
         solo
+        dense
         :disabled="getToggleFilter"
         style="max-width: 550px;"
       >
@@ -334,6 +335,7 @@ export default {
     geoLocationsMarkers: {
       immediate: true,
       handler (value) {
+        console.log(value);
         this.markers = value;
       }
     }
