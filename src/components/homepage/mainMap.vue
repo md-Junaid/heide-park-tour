@@ -16,13 +16,15 @@
       :navigation="true"
       :waypoint-from-lat="53.6315628"
       :waypoint-from-lon="10.0069021"
+      :style="$vuetify.breakpoint.mdAndUp ? 'height:500px;' : 'height:350px;'"
+      :geo-locations-markers="markers"
     />
   </div>
 </template>
 
 <script>
 import commonMap from '@/components/common/commonMap.vue';
-import { mapGetters } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 
 export default {
   name: 'mainMap',
@@ -33,19 +35,36 @@ export default {
 
   data () {
     return {
-      file: null
+      file: null,
+      markers: []
     }
   },
 
   computed: {
     ...mapGetters({
-      getUser: 'getUser'
+      getUser: 'getUser',
+      getAllMarkers: 'getGeoJson'
     })
   },
 
   methods: {
+    ...mapActions(['fetchGeoJson']),
+
     uploadGeoJson () {
       console.log("This is the file thats going to upload: ", this.file)
+    }
+  },
+
+  watch: {
+    getAllMarkers: {
+      immediate: true,
+      handler (value) {
+        if (value.length === 0) {
+          this.fetchGeoJson();
+        } else {
+          this.markers = value;
+        }
+      }
     }
   }
 }

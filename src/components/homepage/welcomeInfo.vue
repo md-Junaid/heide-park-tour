@@ -7,6 +7,7 @@
       append-icon="mdi-check"
       v-model="headlineText"
       solo
+      @keydown.enter="setHeadline()"
       @click:append="setHeadline()"
     ></v-text-field>
     <h2

@@ -101,7 +101,7 @@ export default {
         {
           id: 1,
           text: 'Attractions',
-          page: '/posts',
+          page: '/attractions',
           disable: false
         },
         {

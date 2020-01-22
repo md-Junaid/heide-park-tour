@@ -1,7 +1,6 @@
 <template>
   <l-map
-    :style="$vuetify.breakpoint.mdAndUp ? 'height:500px;' : 'height:350px;'"
-    :options="{scrollWheelZoom:false, zoomControl: false}"
+    :options="{scrollWheelZoom:$vuetify.breakpoint.smAndDown, zoomControl: false}"
     :zoom="zoom"
     :center="center"
     style="z-index: 5;"
@@ -11,80 +10,33 @@
     <!-- <l-control-scale position="bottomleft" :imperial="true" :metric="false"></l-control-scale> -->
     <l-control-zoom position="bottomleft"  ></l-control-zoom>
     <l-tile-layer :url="url" :attribution="attribution"></l-tile-layer>
-    <l-geo-json
-        v-if="show"
-        :geojson="geojson"
-      />
-    <!-- <RoutingControl from='{[57.74, 11.94]}' to='{[57.6792, 11.949]}' /> -->
-    <div v-if="filterdItems.length === 0">
-      <l-marker
-        v-for="(elem, index) in geojson"
-        :key="index"
-        :lat-lng="computeLatLng(elem.lat, elem.lon)"
-      >
-        <l-popup
-          v-if="!elem.tags.name"
-          class="subtitle-1 text-capitalize"
-        >
-          <v-row class="justify-space-between align-center">
-            <p class="subtitle-1 d-flex text-capitalize font-weight-bold mb-1">
+    <l-marker
+      v-for="(elem, index) in markers"
+      :key="index"
+      :lat-lng="computeLatLng(elem.lat, elem.lon)"
+    >
+      <l-popup>
+        <v-row class="justify-space-between align-center">
+          <div class="subtitle-1 d-flex text-capitalize font-weight-bold mb-1 ml-3">
+            <p v-if="!elem.tags.name">
               {{ elem.tags.amenity }}
               {{ elem.tags.tourism }}
             </p>
-            <v-btn v-if="getUser.token" x-small color="primary" class="d-flex mt-2" @click.stop="editItem(elem)"><v-icon small>mdi-pencil</v-icon></v-btn>
-          </v-row>
-        </l-popup>
-        <l-popup v-else>
-          <v-row class="justify-space-between align-center">
-            <p class="subtitle-1 d-flex text-capitalize font-weight-bold mb-1 ml-3">{{ elem.tags.name }}</p>
-            <v-btn v-if="getUser.token" x-small color="primary" class="d-flex mr-3 mt-2" @click.stop="editItem(elem)"><v-icon small>mdi-pencil</v-icon></v-btn>
-          </v-row>
-          <table class="myTableTheme">
-            <tbody>
-              <tr v-for="(value, key) in elem.tags" :key="key" class="subtitle-2">
-                <td class="px-1">{{ key }}</td>
-                <td class="px-1">{{ value }}</td>
-              </tr>
-            </tbody>
-          </table>
-        </l-popup>
-      </l-marker>
-    </div>
-    <div v-else>
-      <l-marker
-        v-for="(elem, index) in filteredMarkers"
-        :key="index"
-        :lat-lng="computeLatLng(elem.lat, elem.lon)"
-      >
-        <l-popup
-          v-if="!elem.tags.name"
-          class="subtitle-1 text-capitalize"
-        >
-          <v-row class="justify-space-between align-center">
-            <p class="subtitle-1 d-flex text-capitalize font-weight-bold mb-1 ml-3">
-              {{ elem.tags.amenity }}
-              {{ elem.tags.tourism }}
-            </p>
-            <v-btn v-if="getUser.token" x-small color="primary" class="d-flex mr-3 mt-2" @click.stop="editItem(elem)"><v-icon small>mdi-pencil</v-icon></v-btn>
-          </v-row>
-        </l-popup>
-        <l-popup v-else>
-          <v-row class="justify-space-between align-center">
-            <p class="subtitle-1 d-flex text-capitalize font-weight-bold mb-1 ml-3">{{ elem.tags.name }}</p>
-            <v-btn v-if="getUser.token" x-small color="primary" class="d-flex mr-3 mt-2" @click.stop="editItem(elem)"><v-icon small>mdi-pencil</v-icon></v-btn>
-          </v-row>
-          <table class="myTableTheme">
-            <tbody>
-              <tr v-for="(value, key) in elem.tags" :key="key" class="subtitle-2">
-                <td class="px-1">{{ key }}</td>
-                <td class="px-1">{{ value }}</td>
-              </tr>
-            </tbody>
-          </table>
-        </l-popup>
-      </l-marker>
-    </div>
-    <l-control position="topleft" >
+            <p v-else>{{ elem.tags.name }}</p>
+          </div>
+          <v-btn v-if="getUser.token" x-small color="primary" class="d-flex mr-3 mt-2" @click.stop="editItem(elem)"><v-icon small>mdi-pencil</v-icon></v-btn>
+        </v-row>
+        <table class="myTableTheme">
+          <tbody>
+            <tr v-for="(value, key) in elem.tags" :key="key" class="subtitle-2">
+              <td class="px-1">{{ key }}</td>
+              <td class="px-1">{{ value }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </l-popup>
+    </l-marker>
+    <l-control v-if="filterOnMap" position="topleft" >
       <v-combobox
         v-model="filterdItems"
         :items="items"
@@ -124,7 +76,6 @@ import {
   LTileLayer,
   LMarker,
   // LControlScale,
-  LGeoJson,
   LPopup,
   LControlZoom,
   LControl
@@ -138,9 +89,6 @@ export default {
   name: 'commonMap',
 
   mounted () {
-    if (this.getGeoJson.length === 0) {
-      this.fetchGeoJson();
-    }
     if (this.navigation) {
       let mymap = this.$refs.mapElement.mapObject;
       var geocoder = L.Control.Geocoder.nominatim();
@@ -162,7 +110,6 @@ export default {
         ]).addTo(map);
         map.fitBounds(poly.getBounds());
       }).addTo(mymap);
-      console.log(mymap)
       var router = myRoutingControl.getRouter();
       router.on('response', function (e) {
         console.log('This routing request consumed ' + e.credits + ' credit(s)');
@@ -176,7 +123,6 @@ export default {
     LTileLayer,
     LMarker,
     // LControlScale,
-    LGeoJson,
     LPopup,
     LControlZoom,
     LControl
@@ -184,8 +130,8 @@ export default {
 
   data () {
     return {
-      geojson: [],
       show: true,
+      markers: [],
       center: L.latLng(53.0252, 9.8762), // geo: 53.0252, 9.8762?z=16
       url: 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
       attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
@@ -228,19 +174,26 @@ export default {
     navigation: {
       type: Boolean,
       default: false
+    },
+    geoLocationsMarkers: {
+      type: Array,
+      default: null
+    },
+    filterOnMap: {
+      type: Boolean,
+      default: true
     }
   },
 
   computed: {
     ...mapGetters({
       getUser: 'getUser',
-      getGeoJson: 'getGeoJson',
       getToggleFilter: 'getToggleFilter'
     })
   },
 
   methods: {
-    ...mapActions(['toggleCommonDialog', 'fetchGeoJson']),
+    ...mapActions(['toggleCommonDialog']),
 
     computeLatLng (lat, lon) {
       return L.latLng(lat, lon);
@@ -254,105 +207,105 @@ export default {
     applyFilter (item) {
       switch (item) {
         case "Roller Coasters":
-          this.geojson.forEach(elem => {
+          this.geoLocationsMarkers.forEach(elem => {
             if (elem.tags.attraction === "roller_coaster") {
               this.filteredMarkers.push(elem);
             }
           });
           break;
         case "Theaters":
-          this.geojson.forEach(elem => {
+          this.geoLocationsMarkers.forEach(elem => {
             if (elem.tags.amenity === "theatre") {
               this.filteredMarkers.push(elem);
             }
           });
           break;
         case "Tourist Attractions":
-          this.geojson.forEach(elem => {
+          this.geoLocationsMarkers.forEach(elem => {
             if (elem.tags.tourism) {
               this.filteredMarkers.push(elem);
             }
           });
           break;
         case "Fast Food Restaurants":
-          this.geojson.forEach(elem => {
+          this.geoLocationsMarkers.forEach(elem => {
             if (elem.tags.amenity === "fast_food") {
               this.filteredMarkers.push(elem);
             }
           });
           break;
         case "Drinking Water":
-          this.geojson.forEach(elem => {
+          this.geoLocationsMarkers.forEach(elem => {
             if (elem.tags.amenity === "drinking_water") {
               this.filteredMarkers.push(elem);
             }
           });
           break;
         case "Doctors":
-          this.geojson.forEach(elem => {
+          this.geoLocationsMarkers.forEach(elem => {
             if (elem.tags.amenity === "doctors") {
               this.filteredMarkers.push(elem);
             }
           });
           break;
         case "Atm":
-          this.geojson.forEach(elem => {
+          this.geoLocationsMarkers.forEach(elem => {
             if (elem.tags.amenity === "atm") {
               this.filteredMarkers.push(elem);
             }
           });
           break;
         case "Toilets":
-          this.geojson.forEach(elem => {
+          this.geoLocationsMarkers.forEach(elem => {
             if (elem.tags.amenity === "toilets") {
               this.filteredMarkers.push(elem);
             }
           });
           break;
         case "Biergarten Rafting":
-          this.geojson.forEach(elem => {
+          this.geoLocationsMarkers.forEach(elem => {
             if (elem.tags.amenity === "biergarten") {
               this.filteredMarkers.push(elem);
             }
           });
           break;
         case "Shops":
-          this.geojson.forEach(elem => {
+          this.geoLocationsMarkers.forEach(elem => {
             if (elem.tags.shop) {
               this.filteredMarkers.push(elem);
             }
           });
           break;
         case "Bench":
-          this.geojson.forEach(elem => {
+          this.geoLocationsMarkers.forEach(elem => {
             if (elem.tags.amenity === "bench") {
               this.filteredMarkers.push(elem);
             }
           });
           break;
         case "Vending Machines":
-          this.geojson.forEach(elem => {
+          this.geoLocationsMarkers.forEach(elem => {
             if (elem.tags.amenity === "vending_machine") {
               this.filteredMarkers.push(elem);
             }
           });
           break;
         case "Car charging Station":
-          this.geojson.forEach(elem => {
+          this.geoLocationsMarkers.forEach(elem => {
             if (elem.tags.amenity === "charging_station") {
               this.filteredMarkers.push(elem);
             }
           });
           break;
         case "Fountain":
-          this.geojson.forEach(elem => {
+          this.geoLocationsMarkers.forEach(elem => {
             if (elem.tags.amenity === "fountain") {
               this.filteredMarkers.push(elem);
             }
           });
           break;
         case "Cafe":
-          this.geojson.forEach(elem => {
+          this.geoLocationsMarkers.forEach(elem => {
             if (elem.tags.amenity === "cafe") {
               this.filteredMarkers.push(elem);
             }
@@ -372,20 +325,22 @@ export default {
     filterdItems: {
       immediate: true,
       handler (value) {
-        this.filteredMarkers = [];
-        value.forEach(item => {
-          this.applyFilter(item)
-        })
+        if (value.length === 0) {
+          this.markers = this.geoLocationsMarkers;
+        } else {
+          console.log("filteredItems: ", value);
+          this.filteredMarkers = [];
+          value.forEach(item => {
+            this.applyFilter(item)
+          })
+          this.markers = this.filteredMarkers;
+        }
       }
     },
-
-    getGeoJson: {
+    geoLocationsMarkers: {
       immediate: true,
       handler (value) {
-        this.geojson = this.getGeoJson;
-        if (this.getGeoJson.length === 0) {
-          this.fetchGeoJson();
-        }
+        this.markers = value;
       }
     }
   }
