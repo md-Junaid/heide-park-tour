@@ -82,7 +82,6 @@ export default {
 
   created () {
     this.fetchAttractions(this.getAllMarkers);
-    console.log("This is all attractions: ", this.getAttractions)
     this.markers = this.getAttractions;
     this.getAttractions.forEach(elem => {
       if (elem.tags.name) {
@@ -103,10 +102,6 @@ export default {
 
   data () {
     return {
-      // currentSelected: {
-      //   id: 306152172,
-      //   name: "Panoramabahn"
-      // },
       items: [],
       markers: [],
       selectedMarker: [],

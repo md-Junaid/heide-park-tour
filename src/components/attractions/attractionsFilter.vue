@@ -121,6 +121,11 @@ export default {
           this.id = value.id;
           if (value.content) {
             this.content = value.content;
+          } else {
+            this.content = `
+              <h1>Yay Headlines!</h1>
+              <p>All these <strong>cool tags</strong> are working now.</p>
+            `;
           }
           if (value.tags.name) {
             this.name = value.tags.name;
