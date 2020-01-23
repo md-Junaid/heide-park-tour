@@ -16,7 +16,7 @@ exports.adminLogin = async (req, res, next) => {
         res.status(400).json(err);
       } else if (user) {
         if (user.password === password) {
-          var token = jwt.sign({ username: user.username }, 'heides3cr3t', { expiresIn: '6h' });
+          var token = jwt.sign({ username: user.username }, 'heides3cr3t', { expiresIn: '3h' });
           res.status(200).json({ success: true, msg: "Successly fully logged in!", token, id: user.id, fullname: user.fullname });
         } else {
           res.send({
@@ -47,12 +47,17 @@ exports.verifyToken = (req, res, next) => {
   // Get auth Header value
   var bearerHeader = req.headers.authorization;
   if (bearerHeader) {
+    console.log("This is token: ", bearerHeader);
     // Get token from array
     var token = req.headers.authorization.split(' ')[1];
     jwt.verify(token, 'heides3cr3t', function (error, decoded) {
       if (error) {
         console.log(error);
         return res.status(401).json({ "error": true, "message": 'Expired Token' });
+        // res.send({
+        //   code: 401,
+        //   msg: "You are not Authorized to do that operation."
+        // });
       } else {
         req.user = decoded.username;
         next();

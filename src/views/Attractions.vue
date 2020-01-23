@@ -21,11 +21,11 @@
                 background-color="green lighten-5"
                 autofocus
                 dense
-                color="green"
+                color="green darken-2"
                 hint="Select any place to know more about them"
                 item-text="name"
                 item-value="id"
-                item-color="green"
+                item-color="green darken-2"
                 persistent-hint
                 clearable
                 @change="selectedItem"
@@ -41,8 +41,8 @@
                 label="Age Range"
                 solo
                 dense
-                color="green"
-                item-color="green"
+                color="green darken-2"
+                item-color="green darken-2"
                 persistent-hint
                 hint="See the places where you are not allowed"
               ></v-select>
@@ -50,8 +50,12 @@
           </v-row>
         </v-container>
         <attractionsFilter
+          v-if="getUser.token"
           :selected-item="selectedMarker[0]"
         />
+        <div v-else class="container">
+          <div class="tiptap-vuetify-editor__content" v-html="content"/>
+        </div>
         <commonMap
           :zoom="15"
           :geo-locations-markers="markers"
@@ -77,6 +81,7 @@ export default {
 
   created () {
     this.fetchAttractions(this.getGeoJson);
+    this.fetchAttractionsPosts();
   },
 
   data () {
@@ -88,7 +93,12 @@ export default {
       items: [],
       markers: [],
       selectedMarker: [],
-      ageRanges: ['<10', '<15', '<20', '>20']
+      hideContent: false,
+      ageRanges: ['<10', '<15', '<20', '>20'],
+      content: `
+        <h1>PLACE NAME COMES HERE</h1>
+        <p>This is what will be visible to <strong>users</strong>. To add new info login</p>
+      `
     }
   },
 
@@ -101,7 +111,8 @@ export default {
     ...mapGetters({
       getUser: 'getUser',
       getGeoJson: 'getGeoJson',
-      getAttractions: 'getAttractions'
+      getAttractions: 'getAttractions',
+      getAllAttractionsPosts: 'getAllAttractionsPosts'
     })
   },
 
@@ -110,7 +121,11 @@ export default {
       immediate: true,
       handler (value) {
         if (value.length === 0) {
-          this.markers = this.getAttractions
+          this.markers = this.getAttractions;
+          this.content = `
+            <h1>PLACE NAME COMES HERE</h1>
+            <p>This is what will be visible to <strong>users</strong>. To add new info login</p>
+          `
         } else {
           this.markers = value;
         }
@@ -119,17 +134,31 @@ export default {
   },
 
   methods: {
-    ...mapActions(['fetchAttractions']),
+    ...mapActions(['fetchAttractions', 'fetchAttractionsPosts']),
 
     selectedItem (itemId) {
       this.selectedMarker = [];
+      this.content = `
+            <h1>PLACE NAME COMES HERE</h1>
+            <p>This is what will be visible to <strong>users</strong>. To add new info login</p>
+          `
       if (itemId) {
+        this.showContent(itemId);
         this.getAttractions.forEach(elem => {
           if (elem.id === itemId) {
             this.selectedMarker.push(elem);
           }
         });
+        this.selectedMarker[0].content = this.content;
       }
+    },
+
+    showContent (itemId) {
+      this.getAllAttractionsPosts.forEach(elem => {
+        if (elem.markerId === itemId) {
+          this.content = elem.content;
+        }
+      });
     }
   },
 

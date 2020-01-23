@@ -1,9 +1,14 @@
+import ApiService from '@/services/ApiService';
+import router from '../../router/index';
+
 const state = {
-  attractionsGeoJson: []
+  attractionsGeoJson: [],
+  allAttractionsPosts: []
 };
 
 const getters = {
-  getAttractions: (state) => state.attractionsGeoJson
+  getAttractions: (state) => state.attractionsGeoJson,
+  getAllAttractionsPosts: (state) => state.allAttractionsPosts
 };
 
 const mutations = {
@@ -15,12 +20,29 @@ const mutations = {
         }
       });
     }
+  },
+
+  mutateAttractionsPosts: (state, attractionsPosts) => {
+    state.allAttractionsPosts = attractionsPosts;
   }
 };
 
 const actions = {
   fetchAttractions ({ commit }, geojson) {
     commit('mutateFetchAttractions', geojson);
+  },
+
+  async fetchAttractionsPosts ({ commit }) {
+    const response = await ApiService.fetchAllPosts();
+    const attractionsPosts = response.data.allPosts;
+    commit('mutateAttractionsPosts', attractionsPosts);
+  },
+
+  async addAttractionsPost ({ _ }, params) {
+    const response = await ApiService.addPost(params);
+    if (response.status === 201) {
+      router.go();
+    }
   }
 };
 

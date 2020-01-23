@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-sheet v-if="getUser.token">
+    <v-sheet v-if="false">
       <v-file-input
         chips
         label="Upload GeoJson Data"

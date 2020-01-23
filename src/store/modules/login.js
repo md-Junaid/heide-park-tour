@@ -27,6 +27,7 @@ const mutations = {
 
 const actions = {
   async adminLogin ({ commit, dispatch }, user) {
+    localStorage.removeItem('token');
     const response = await ApiService.login(user);
     if (response.data.code === 403) {
       const res = {

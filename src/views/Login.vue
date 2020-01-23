@@ -138,7 +138,7 @@ export default {
       if (this.username && this.password && this.twoFac) {
         const res = await this.adminLogin(user);
         if (res.loggedIn) {
-          this.$router.push({ name: 'HomePage' });
+          this.$router.go({ name: 'HomePage' });
         } else {
           const params = {
             snackbar: true,

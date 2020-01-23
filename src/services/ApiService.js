@@ -9,9 +9,11 @@ const headers = {
 
 axios.interceptors.response.use(
   response => {
+    console.log(response)
     return response;
   },
   err => {
+    console.log(err)
     const { response: { status, data } } = err;
     if (status === 401 && data.message === "Expired Token") {
       store.dispatch('tokenExpire');
@@ -31,6 +33,16 @@ export default {
 
   setHeadline (params) {
     return axios.put('api/headline/' + params.id, params, {
+      headers: headers
+    });
+  },
+
+  fetchAllPosts () {
+    return axios.get('api/attractions');
+  },
+
+  addPost (params) {
+    return axios.post('api/attractions', params, {
       headers: headers
     });
   }
