@@ -81,8 +81,24 @@ export default {
   name: 'Attractions',
 
   created () {
-    this.fetchAttractions(this.getGeoJson);
-    this.fetchAttractionsPosts();
+    this.fetchAttractions(this.getAllMarkers);
+    console.log("This is all attractions: ", this.getAttractions)
+    this.markers = this.getAttractions;
+    this.getAttractions.forEach(elem => {
+      if (elem.tags.name) {
+        const params = {
+          id: elem.id,
+          name: elem.tags.name
+        }
+        this.items.push(params);
+      } else {
+        const params = {
+          id: elem.id,
+          name: elem.tags.tourism
+        }
+        this.items.push(params);
+      }
+    });
   },
 
   data () {
@@ -111,7 +127,7 @@ export default {
   computed: {
     ...mapGetters({
       getUser: 'getUser',
-      getGeoJson: 'getGeoJson',
+      getAllMarkers: 'getGeoJson',
       getAttractions: 'getAttractions',
       getAllAttractionsPosts: 'getAllAttractionsPosts'
     })
@@ -131,55 +147,39 @@ export default {
           this.markers = value;
         }
       }
+    },
+
+    getAttractions: {
+      immediate: true,
+      handler (value) {
+        if (value.length === 0) {
+          this.fetchAttractions(this.getAllMarkers);
+        }
+      }
     }
   },
 
   methods: {
-    ...mapActions(['fetchAttractions', 'fetchAttractionsPosts']),
+    ...mapActions(['fetchAttractions']),
 
     selectedItem (itemId) {
       this.selectedMarker = [];
-      this.content = `
-            <h1>PLACE NAME COMES HERE</h1>
-            <p>This is what will be visible to <strong>users</strong>. To add new info login</p>
-          `
       if (itemId) {
-        this.showContent(itemId);
         this.getAttractions.forEach(elem => {
           if (elem.id === itemId) {
             this.selectedMarker.push(elem);
+            if (elem.content) {
+              this.content = elem.content
+            } else {
+              this.content = `
+                <h1>PLACE NAME COMES HERE</h1>
+                <p>This is what will be visible to <strong>users</strong>. To add new info login</p>
+              `
+            }
           }
         });
-        this.selectedMarker[0].content = this.content;
       }
-    },
-
-    showContent (itemId) {
-      this.getAllAttractionsPosts.forEach(elem => {
-        if (elem.markerId === itemId) {
-          this.content = elem.content;
-        }
-      });
     }
-  },
-
-  mounted () {
-    this.markers = this.getAttractions;
-    this.getAttractions.forEach(elem => {
-      if (elem.tags.name) {
-        const params = {
-          id: elem.id,
-          name: elem.tags.name
-        }
-        this.items.push(params);
-      } else {
-        const params = {
-          id: elem.id,
-          name: elem.tags.tourism
-        }
-        this.items.push(params);
-      }
-    });
   }
 }
 </script>

@@ -118,8 +118,10 @@ export default {
           this.show = false;
         } else {
           this.show = true;
-          this.content = value.content;
           this.id = value.id;
+          if (value.content) {
+            this.content = value.content;
+          }
           if (value.tags.name) {
             this.name = value.tags.name;
           } else {

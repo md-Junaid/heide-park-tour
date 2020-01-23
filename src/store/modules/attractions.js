@@ -12,30 +12,32 @@ const getters = {
 };
 
 const mutations = {
-  mutateFetchAttractions: (state, geojson) => {
-    if (state.attractionsGeoJson === []) {
-      geojson.forEach(elem => {
-        if (elem.type === "node" && (elem.tags.tourism || elem.tags.attraction)) {
-          state.attractionsGeoJson.push(elem);
-        }
-      });
-    }
+  mutateFetchAttractions: (state, attractionsMarkers) => {
+    state.attractionsGeoJson = attractionsMarkers;
   },
 
-  mutateAttractionsPosts: (state, attractionsPosts) => {
+  mutateAttractionsPosts: (state, { attractionsPosts, dispatch }) => {
     state.allAttractionsPosts = attractionsPosts;
+    dispatch('mergeAttractionsObjs');
   }
 };
 
 const actions = {
-  fetchAttractions ({ commit }, geojson) {
-    commit('mutateFetchAttractions', geojson);
+  fetchAttractions ({ commit, dispatch }, geojson) {
+    const attractionsMarkers = [];
+    geojson.forEach(elem => {
+      if (elem.type === "node" && (elem.tags.tourism || elem.tags.attraction)) {
+        attractionsMarkers.push(elem);
+      }
+    });
+    commit('mutateFetchAttractions', attractionsMarkers);
+    dispatch('fetchAttractionsPosts');
   },
 
-  async fetchAttractionsPosts ({ commit }) {
+  async fetchAttractionsPosts ({ commit, dispatch }) {
     const response = await ApiService.fetchAllPosts();
     const attractionsPosts = response.data.allPosts;
-    commit('mutateAttractionsPosts', attractionsPosts);
+    commit('mutateAttractionsPosts', { attractionsPosts, dispatch });
   },
 
   async addAttractionsPost ({ _ }, params) {
@@ -43,6 +45,16 @@ const actions = {
     if (response.status === 201) {
       router.go();
     }
+  },
+
+  mergeAttractionsObjs ({ commit, getters }) {
+    getters.getAttractions.forEach(marker => {
+      getters.getAllAttractionsPosts.forEach(post => {
+        if (marker.id === post.markerId) {
+          marker.content = post.content;
+        }
+      });
+    });
   }
 };
 

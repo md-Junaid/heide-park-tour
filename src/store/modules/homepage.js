@@ -23,6 +23,7 @@ const mutations = {
   },
 
   mutateFetchGeoJson: (state, res) => {
+    state.geojson = [];
     res.forEach(elem => {
       if (elem.type === "node" && elem.tags) {
         state.geojson.push(elem);

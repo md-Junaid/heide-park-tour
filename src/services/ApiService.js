@@ -9,11 +9,11 @@ const headers = {
 
 axios.interceptors.response.use(
   response => {
-    console.log(response)
+    // console.log(response)
     return response;
   },
   err => {
-    console.log(err)
+    // console.log(err)
     const { response: { status, data } } = err;
     if (status === 401 && data.message === "Expired Token") {
       store.dispatch('tokenExpire');

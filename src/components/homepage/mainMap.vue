@@ -35,6 +35,10 @@ export default {
     commonMap
   },
 
+  created () {
+    this.fetchGeoJson();
+  },
+
   data () {
     return {
       file: null,
