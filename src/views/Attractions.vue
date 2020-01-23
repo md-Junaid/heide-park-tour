@@ -142,15 +142,6 @@ export default {
           this.markers = value;
         }
       }
-    },
-
-    getAttractions: {
-      immediate: true,
-      handler (value) {
-        if (value.length === 0) {
-          this.fetchAttractions(this.getAllMarkers);
-        }
-      }
     }
   },
 

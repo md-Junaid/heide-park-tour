@@ -31,12 +31,6 @@ export default {
     return axios.get('api/');
   },
 
-  setHeadline (params) {
-    return axios.put('api/headline/' + params.id, params, {
-      headers: headers
-    });
-  },
-
   fetchAllPosts () {
     return axios.get('api/attractions');
   },

@@ -9,7 +9,6 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex';
 import carousel from '@/components/homepage/carousel';
 import welcomeInfo from '@/components/homepage/welcomeInfo';
 import mainMap from '@/components/homepage/mainMap';
@@ -17,24 +16,10 @@ import mainMap from '@/components/homepage/mainMap';
 export default {
   name: 'HomePage',
 
-  created () {
-    this.fetchHomepage();
-  },
-
   components: {
     carousel,
     welcomeInfo,
     mainMap
-  },
-
-  computed: {
-    ...mapGetters({
-      getUser: 'getUser'
-    })
-  },
-
-  methods: {
-    ...mapActions(['fetchHomepage'])
   }
 }
 </script>

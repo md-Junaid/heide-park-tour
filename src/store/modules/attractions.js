@@ -26,7 +26,7 @@ const actions = {
   fetchAttractions ({ commit, dispatch }, geojson) {
     const attractionsMarkers = [];
     geojson.forEach(elem => {
-      if (elem.type === "node" && (elem.tags.tourism || elem.tags.attraction)) {
+      if (elem.tags.tourism || elem.tags.attraction) {
         attractionsMarkers.push(elem);
       }
     });

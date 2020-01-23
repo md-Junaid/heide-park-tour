@@ -13,7 +13,7 @@
     <l-marker
       v-for="(elem, index) in markers"
       :key="index"
-      :lat-lng="computeLatLng(elem.lat, elem.lon)"
+      :lat-lng="computeLatLng(elem.geometry.coordinates[1], elem.geometry.coordinates[0])"
     >
       <l-popup>
         <!-- <v-row class="justify-space-between align-center"> -->

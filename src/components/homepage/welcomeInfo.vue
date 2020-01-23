@@ -1,22 +1,10 @@
 <template>
   <v-container class="mt-5" style="color: #424242;">
-    <v-text-field
-      label="Headline"
-      v-if="headline"
-      placeholder="Enter some headline"
-      append-icon="mdi-check"
-      v-model="headlineText"
-      solo
-      @keydown.enter="setHeadline()"
-      @click:append="setHeadline()"
-    ></v-text-field>
     <h2
-      v-else
       class="mt-5 display-1 font-weight-medium text-center green--text text--darken-2"
       :class="$vuetify.breakpoint.xsOnly ? 'title' : ''"
-      @click="editHeadline()"
     >
-      {{ getHeadline.headline }}
+      We help you plan your trip to Heide Park Resort
     </h2>
     <div style="width:125px; margin:0 auto;" class="mt-5"><v-divider class="hr green darken-2"/></div>
     <v-card
@@ -46,46 +34,8 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex';
-
 export default {
-  name: 'welcomeInfo',
-
-  data () {
-    return {
-      headlineText: null,
-      headline: false
-    }
-  },
-
-  computed: {
-    ...mapGetters({
-      getUser: 'getUser',
-      getHeadline: 'getHeadline'
-    })
-  },
-
-  watch: {
-    getHeadline: {
-      immediate: true,
-      handler (value) {
-        this.headlineText = value.headline;
-      }
-    }
-  },
-
-  methods: {
-    ...mapActions(['setHeadlineText']),
-    setHeadline () {
-      this.setHeadlineText({ id: this.getHeadline._id, headline: this.headlineText });
-    },
-
-    editHeadline () {
-      if (this.getUser.token) {
-        this.headline = true;
-      }
-    }
-  }
+  name: 'welcomeInfo'
 }
 </script>
 
