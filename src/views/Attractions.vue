@@ -44,6 +44,7 @@
                 color="green darken-2"
                 item-color="green darken-2"
                 persistent-hint
+                disabled
                 hint="See the places where you are not allowed"
               ></v-select>
             </v-col>
