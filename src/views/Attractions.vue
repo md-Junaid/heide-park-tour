@@ -2,7 +2,7 @@
   <div>
     <v-sheet max-width="1000" class="mt-5 elevation-6" style="margin: 0 auto;">
       <v-container>
-        <h2 class="text-center font-weight-regular mt-4 green--text text--darken-2 custom-font" style="font-size:45px;">Tourist Attractions</h2>
+        <h2 class="text-center font-weight-regular mt-4 green--text text--darken-2 custom-font" style="font-size:2.8125rem;">Tourist Attractions</h2>
         <p style="" class="ma-5 text-center subtitle-1 text-justify">
           Welcome to Heide Park Tour's Attraction page, here you can get details for each tourist attraction offered by Heide
           Park Resort. Just use our search filters to get the details.
@@ -49,6 +49,9 @@
             </v-col>
           </v-row>
         </v-container>
+        <attractionsFilter
+          :selected-item="selectedMarker[0]"
+        />
         <commonMap
           :zoom="15"
           :geo-locations-markers="markers"
@@ -67,6 +70,7 @@
 <script>
 import { mapGetters, mapActions } from 'vuex';
 import commonMap from '@/components/common/commonMap.vue';
+import attractionsFilter from '@/components/attractions/attractionsFilter';
 
 export default {
   name: 'Attractions',
@@ -89,7 +93,8 @@ export default {
   },
 
   components: {
-    commonMap
+    commonMap,
+    attractionsFilter
   },
 
   computed: {

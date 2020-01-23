@@ -1,4 +1,6 @@
-# heide_park_tour (Official Website: www.heide-park-tour.herokuapp.com)
+# heide_park_tour
+## Official Website
+This project is now deployed on Heroku platform, feel free to visit here: https://heide-park-tour.herokuapp.com/
 ## Installation
 1. Download and install mongodb(Community version)
 2. Run command `npm install -g vue-cli`

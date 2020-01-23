@@ -59,7 +59,8 @@
           :disabled="routes.disable"
         >
           <span
-            class="caption custom-font"
+            class="custom-font"
+            style="font-size: .7rem;"
           >
             {{routes.text}}
           </span>
