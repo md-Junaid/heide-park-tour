@@ -8,7 +8,7 @@
     id="mapid"
   >
     <!-- <l-control-scale position="bottomleft" :imperial="true" :metric="false"></l-control-scale> -->
-    <l-control-zoom position="bottomright"  ></l-control-zoom>
+    <l-control-zoom position="bottomleft"  ></l-control-zoom>
     <l-tile-layer :url="url" :attribution="attribution"></l-tile-layer>
     <l-marker
       v-for="(elem, index) in markers"
@@ -36,7 +36,7 @@
         </table>
       </l-popup>
     </l-marker>
-    <l-control v-if="filterOnMap" position="topright" >
+    <l-control v-if="filterOnMap" position="topleft" >
       <v-combobox
         v-model="filterdItems"
         :items="items"
@@ -100,8 +100,7 @@ export default {
           L.latLng(53.0227112, 9.8707054) // hamburg airpot bus stop Location: 53.6315628, 10.0069021
         ],
         routeWhileDragging: true,
-        geocoder: geocoder,
-        position: 'topleft'
+        geocoder: geocoder
       }).addTo(mymap);
       var router = myRoutingControl.getRouter();
       router.on('response', function (e) {

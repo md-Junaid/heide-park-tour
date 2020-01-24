@@ -27,6 +27,13 @@ const actions = {
     const attractionsMarkers = [];
     geojson.forEach(elem => {
       if (elem.tags.tourism || elem.tags.attraction) {
+        if ((elem.tags.tourism === 'viewpoint') ||
+            (elem.tags.tourism === 'hotel') ||
+            (elem.tags.tourism === 'hostel') ||
+            (elem.tags.tourism === 'picnic_site') ||
+            (elem.tags.tourism === 'information')) {
+          return;
+        }
         attractionsMarkers.push(elem);
       }
     });

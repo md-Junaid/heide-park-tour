@@ -35,10 +35,6 @@ export default {
     commonMap
   },
 
-  created () {
-    this.fetchGeoJson();
-  },
-
   data () {
     return {
       file: null,
@@ -54,11 +50,7 @@ export default {
   },
 
   methods: {
-    ...mapActions(['fetchGeoJson']),
-
-    uploadGeoJson () {
-      console.log("This is the file thats going to upload: ", this.file)
-    }
+    ...mapActions(['fetchGeoJson'])
   },
 
   watch: {

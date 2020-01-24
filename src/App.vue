@@ -40,9 +40,9 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
   /* background-color: #EAEAE0; */
-  background-color: rgba(165, 230, 157, 0.1);
+  /* background-color: rgba(165, 230, 157, 0.1); */
   /* background-size: cover; */
-  background-image: url("https://www.transparenttextures.com/patterns/arches.png");
+  /* background-image: url("https://www.transparenttextures.com/patterns/arches.png"); */
 }
 
 html{

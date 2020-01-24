@@ -1,11 +1,13 @@
 <template>
   <v-carousel
     cycle
+    flat
     hide-delimiters
     hide-delimiter-background
     :show-arrows="false"
     interval="5000"
     height="600"
+    continuous
   >
     <v-carousel-item
       v-for="(item,i) in items"
@@ -37,6 +39,7 @@
         </v-col>
       </v-row>
     </v-carousel-item>
+    <div class="wave"></div>
   </v-carousel>
 </template>
 
@@ -46,16 +49,27 @@ export default {
 
   data () {
     return {
-      items: ['heide_park1.jpg', 'heide_park2.jpg']
+      items: ['heide_park1.jpg', 'heide_park2.jpg', 'heide_park3.jpg', 'heide_park4.jpg']
     }
   }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style>
 .overlay {
-  background-color: rgba(0,0,0,0.3);
-  z-index: 2;
+  background-color: rgba(0,0,0,0.4);
+  z-index: 10;
+}
+
+.wave {
+  position: absolute;
+  width: 100%;
+  height: 75px;
+  transform: rotate(180deg);
+  bottom: 0;
+  margin-bottom: -1px;
+  left: 0;
+  background: url('../../assets/wave1.svg');
 }
 </style>
