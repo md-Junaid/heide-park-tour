@@ -50,7 +50,7 @@ const actions = {
   async fetchAttractionsPosts ({ commit, dispatch }) {
     const response = await ApiService.fetchAllPosts();
     const attractionsPosts = response.data.allPosts;
-    console.log(response.data.allPosts)
+    // console.log(response.data.allPosts)
     commit('mutateAttractionsPosts', { attractionsPosts, dispatch });
   },
 
@@ -76,6 +76,7 @@ const actions = {
           marker.content = post.content;
           marker.thumbnail = post.thumbnail;
           marker.postId = post._id;
+          marker.level = post.level;
         }
       });
     });

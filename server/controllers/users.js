@@ -16,7 +16,7 @@ exports.adminLogin = async (req, res, next) => {
         res.status(400).json(err);
       } else if (user) {
         if (user.password === password) {
-          var token = jwt.sign({ username: user.username }, 'heides3cr3t', { expiresIn: '3h' });
+          var token = jwt.sign({ username: user.username }, 'heides3cr3t', { expiresIn: '10h' });
           res.status(200).json({ success: true, msg: "Successly fully logged in!", token, id: user.id, fullname: user.fullname });
         } else {
           res.send({

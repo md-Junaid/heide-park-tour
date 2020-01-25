@@ -15,9 +15,10 @@
           label="Experience-Level"
           placeholder="Fill in the experience level for this attraction"
           :value="level"
-          hint="Experience level can be relaxing, moderate, or wild"
+          hint="Set Experience level to Relaxing, Moderate, or Wild"
           persistent-hint
           outlined
+          @change="changeLevel"
         ></v-text-field>
       </v-col>
       <v-col cols="12" sm="6" md="4" class="pa-0 pb-3">
@@ -159,6 +160,11 @@ export default {
 
     cancel () {
       this.$emit('cancel');
+    },
+
+    changeLevel (item) {
+      this.level = item;
+      console.log("changed level: ", this.level);
     },
 
     eidtCurrentPost () {

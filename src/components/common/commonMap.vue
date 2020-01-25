@@ -104,8 +104,8 @@ export default {
       }).addTo(mymap);
       var router = myRoutingControl.getRouter();
       router.on('response', function (e) {
-        console.log('This routing request consumed ' + e.credits + ' credit(s)');
-        console.log('You have ' + e.remaining + ' left');
+        // console.log('This routing request consumed ' + e.credits + ' credit(s)');
+        // console.log('You have ' + e.remaining + ' left');
       });
     }
   },

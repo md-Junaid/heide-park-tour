@@ -28,6 +28,7 @@
           <!-- <v-card-subtitle class="pb-0">{{ attraction.tags.tourism }}</v-card-subtitle> -->
 
           <v-card-actions>
+            <v-chip>Level: <span class="light-blue--text text--darken-2">{{ attraction.level }}</span></v-chip>
             <v-spacer></v-spacer>
             <v-btn
               color="green darken-2"

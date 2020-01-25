@@ -36,28 +36,27 @@
       <v-container class="py-0" v-if="!showAttraction">
         <v-row align="center" class="ma-1 mb-0">
           <v-col class="d-flex" cols="12" sm="6">
-            <p class="font-weight-bold mt-2">Experience Level:</p>
-            <v-select
-              :items="items"
-              :key="items.id"
-              class="ml-2"
-              label="All Tourist Attractions"
-              solo
-              multiple
-              v-model="items.name"
-              background-color="green lighten-5"
-              autofocus
-              dense
-              color="green darken-2"
-              hint="Filter attractions according to experience level"
-              item-text="name"
-              item-value="id"
-              item-color="green darken-2"
-              persistent-hint
-              :disabled="disableFilters"
-              clearable
-              @change="selectedItem"
-            ></v-select>
+            <v-row>
+              <v-col cols="12" sm="6" class="text-right"><p class="font-weight-bold mt-2">Experience Level:</p></v-col>
+              <v-col cols="12" sm="6">
+                <v-select
+                :items="items"
+                class="ml-2"
+                label="All Tourist Attractions"
+                solo
+                background-color="green lighten-5"
+                autofocus
+                dense
+                color="green darken-2"
+                hint="Filter according to experience levels"
+                item-color="green darken-2"
+                persistent-hint
+                :disabled="disableFilters"
+                clearable
+                @change="selectedItem"
+              ></v-select>
+              </v-col>
+            </v-row>
           </v-col>
 
           <v-col class="d-flex ml-5" cols="12" sm="3">
@@ -73,14 +72,16 @@
               item-color="green darken-2"
               persistent-hint
               :disabled="disableFilters"
-              hint="See the places where you are not allowed"
+              clearable
+              hint="Filter attractions according to age"
+              @change="ageSelected"
             ></v-select>
           </v-col>
         </v-row>
       </v-container>
       <div>
         <attractionsDisplay
-          :attractions="getAttractions"
+          :attractions="markers"
           @clicked="displayAttraction"
           v-if="!showAttraction"
         />
@@ -90,9 +91,13 @@
               <v-icon>mdi-arrow-left-thick</v-icon> back
             </v-btn>
             <v-spacer></v-spacer>
-            <h2 class="light-blue--text text--darken-2 custom-font">{{ attraction.tags.name }}</h2>
+            <h2 class="light-blue--text text--darken-2 custom-font">
+              {{ attraction.tags.name }}
+              <span class="body-1">({{ attraction.level }})</span>
+              <v-chip> <v-icon>mdi-human-child</v-icon>: {{ attraction.age }} </v-chip>
+              </h2>
             <v-spacer></v-spacer>
-            <v-btn v-show="!editAttraction" color="light-blue darken-2 mr-5" dark @click="edit()">Edit</v-btn>
+            <v-btn v-show="!editAttraction" v-if="getUser.token" color="light-blue darken-2 mr-5" dark @click="edit()">Edit</v-btn>
           </v-row>
           <div v-if="editAttraction">
             <attractionEdit
@@ -133,14 +138,15 @@ export default {
 
   data () {
     return {
-      items: [],
+      es6: [],
+      items: ['Relaxing', 'Moderate', 'Wild'],
       markers: [],
       showAttraction: false,
       editAttraction: false,
       disableFilters: true,
       selectedMarker: [],
       carouselItems: ['heide_park1.jpg', 'heide_park2.jpg', 'heide_park3.jpg', 'heide_park4.jpg', 'heide_park5.jpg', 'heide_park6.jpg'],
-      ageRanges: ['<10', '<15', '<20', '>20'],
+      ageRanges: ['4', '5', '6', '7', '8', '9', '10', '11', '12+'],
       attraction: {},
       emptyContent: `
         <div class="text-center"><h2>Oops seems like our admins didn't fill in the information ¯\\_(ツ)_/¯</h2>
@@ -163,11 +169,49 @@ export default {
     })
   },
 
+  watch: {
+    getAttractions: {
+      immediate: true,
+      handler (value) {
+        if (value === 0) {
+          console.log("wth!!")
+        } else {
+          this.markers = value;
+        }
+      }
+    }
+  },
+
   methods: {
     ...mapActions(['fetchAttractions', 'fetchAttractionsPosts']),
 
-    selectedItem (itemId) {
-      console.log(itemId);
+    selectedItem (item) {
+      var filterAttractions = [];
+      console.log("item: ", item);
+      if (item === 'Wild') {
+        this.getAttractions.forEach(elem => {
+          if (elem.level === item) {
+            filterAttractions.push(elem);
+          }
+        });
+        this.markers = filterAttractions;
+      } else if (item === 'Moderate') {
+        this.getAttractions.forEach(elem => {
+          if (elem.level === item) {
+            filterAttractions.push(elem);
+          }
+        });
+        this.markers = filterAttractions;
+      } else if (item === 'Relaxing') {
+        this.getAttractions.forEach(elem => {
+          if (elem.level === item) {
+            filterAttractions.push(elem);
+          }
+        });
+        this.markers = filterAttractions;
+      } else {
+        this.markers = this.getAttractions;
+      }
     },
 
     displayAttraction (attraction) {
@@ -188,6 +232,27 @@ export default {
 
     cancelEdit () {
       this.editAttraction = false;
+    },
+
+    ageSelected (age) {
+      var filterAttractions = [];
+      if ((age === '4') || (age === '5')) {
+        this.getAttractions.forEach(elem => {
+          if (elem.age === '4-12') {
+            filterAttractions.push(elem);
+          }
+        });
+        this.markers = filterAttractions;
+      } else if ((age === '6') || (age === '7') || (age === '8') || (age === '9') || (age === '10') || (age === '11') || (age === '12+')) {
+        this.getAttractions.forEach(elem => {
+          if (elem.age === '6-12') {
+            filterAttractions.push(elem);
+          }
+        });
+        this.markers = filterAttractions;
+      } else {
+        this.markers = this.getAttractions;
+      }
     }
   },
 
