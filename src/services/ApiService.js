@@ -37,7 +37,8 @@ export default {
 
   addPost (params) {
     return axios.post('api/attractions', params, {
-      headers: headers
+      headers: headers,
+      'Content-Type': 'multipart/form-data'
     });
   }
 };

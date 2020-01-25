@@ -2,7 +2,7 @@ const Attractions = require('../models/attractions');
 
 exports.getAllAttractionsPost = async (req, res, next) => {
   try {
-    Attractions.find({}, 'markerId age content', function (error, allPosts) {
+    Attractions.find({}, function (error, allPosts) {
       if (error) { console.error(error); }
       res.send({
         allPosts: allPosts
@@ -16,14 +16,18 @@ exports.getAllAttractionsPost = async (req, res, next) => {
 
 exports.addAttractionsPost = (req, res, next) => {
   try {
-    var markerId = req.body.marker_id;
-    var age = req.body.age;
+    var markerId = req.body.markerId;
+    var level = req.body.level;
     var content = req.body.content;
+    var thumbnail = req.body.thumbnail;
+
+    console.log("received: ", req.body);
 
     var newPost = new Attractions({
       markerId: markerId,
-      age: age,
-      content: content
+      level: level,
+      content: content,
+      thumbnail: thumbnail
     });
 
     newPost.save(function (error) {

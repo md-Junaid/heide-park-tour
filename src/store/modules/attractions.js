@@ -44,13 +44,15 @@ const actions = {
   async fetchAttractionsPosts ({ commit, dispatch }) {
     const response = await ApiService.fetchAllPosts();
     const attractionsPosts = response.data.allPosts;
+    console.log(response.data.allPosts)
     commit('mutateAttractionsPosts', { attractionsPosts, dispatch });
   },
 
-  async addAttractionsPost ({ _ }, params) {
+  async addAttractionsPost ({ dispatch }, params) {
     const response = await ApiService.addPost(params);
     if (response.status === 201) {
-      router.go();
+      router.go({ name: 'Attractions' });
+      // dispatch('fetchAttractionsPosts');
     }
   },
 
@@ -59,6 +61,7 @@ const actions = {
       getters.getAllAttractionsPosts.forEach(post => {
         if (marker.id === post.markerId) {
           marker.content = post.content;
+          marker.thumbnail = post.thumbnail;
         }
       });
     });

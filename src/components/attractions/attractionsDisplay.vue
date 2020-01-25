@@ -10,9 +10,9 @@
         max-width="400"
       >
         <v-img
-          class="white--text align-end"
+          class="white--text align-end overlay"
           height="200px"
-          src="https://cdn.vuetifyjs.com/images/cards/docks.jpg"
+          :src="attraction.thumbnail? attraction.thumbnail: alt"
         >
           <v-card-title>{{ attraction.tags.name }}</v-card-title>
         </v-img>
@@ -37,6 +37,12 @@
 <script>
 export default {
   name: 'attractionsDisplay',
+
+  data () {
+    return {
+      alt: 'https://cdn.vuetifyjs.com/images/cards/docks.jpg'
+    }
+  },
 
   props: {
     attractions: {

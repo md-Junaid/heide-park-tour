@@ -19,14 +19,10 @@
           persistent-hint
         ></v-text-field>
       </v-col>
-      <v-col cols="12" sm="6" md="4">
-        <v-file-input
-          :rules="rules"
-          label="Thumbnail Image"
-          prepend-icon="mdi-camera"
-          accept="image/png, image/jpeg, image/bmp"
-          v-model="thumbnail"
-        ></v-file-input>
+      <v-col cols="12" sm="6" md="4" class="pa-0 pb-3">
+        <clUpload
+          @res="getImgUrl"
+          class="align" />
       </v-col>
     </v-row>
     <div>
@@ -34,7 +30,7 @@
     </div>
     <div class="text-right mt-5">
       <v-btn color="grey darken-2" text :large="$vuetify.breakpoint.mdAndUp" @click="cancel()">cancel</v-btn>
-      <v-btn color="light-blue darken-2" dark :large="$vuetify.breakpoint.mdAndUp" @click="submit()">Submit</v-btn>
+      <v-btn color="light-blue darken-2" :dark="!disable" :disabled="disable" :x-large="$vuetify.breakpoint.mdAndUp" @click.prevent="submit()">Submit</v-btn>
     </div>
     <h3 class="mt-4 primary--text text-center">This is the preview of your post</h3>
     <v-divider/>
@@ -65,11 +61,12 @@ import {
   History,
   Image
 } from "tiptap-vuetify";
+import clUpload from '@/components/common/clUpload';
 
 export default {
   name: 'attractionEdit',
 
-  components: { TiptapVuetify },
+  components: { TiptapVuetify, clUpload },
 
   data () {
     return {
@@ -78,6 +75,7 @@ export default {
       show: true,
       level: 'Wild',
       thumbnail: null,
+      disable: true,
       rules: [
         value => !value || value.size < 1020000 || 'Thumbnail image should be less than or equal to 1 MB!'
       ],
@@ -136,12 +134,13 @@ export default {
     ...mapActions(['addAttractionsPost', 'toggleSnackBar']),
 
     submit () {
-      const params = this.attraction;
-      console.log(this.attraction)
-      params.level = this.level;
-      params.thumbnail = this.thumbnail;
+      const params = {
+        markerId: this.attraction.id,
+        level: this.level,
+        thumbnail: this.thumbnail,
+        content: this.attraction.content
+      };
       var snackbarObj = {};
-      // this.addAttractionsPost(params);
       if (!params.content || params.thumbnail === null || params.level === "") {
         snackbarObj.snackbar = true;
         snackbarObj.snackbarColor = "error";
@@ -154,12 +153,19 @@ export default {
         snackbarObj.snackbar = true;
         snackbarObj.snackbarColor = "primary";
         snackbarObj.msg = "Your Post about this place has been saved successfully.";
+        console.log("before submit:", params)
+        this.addAttractionsPost(params);
       }
       this.toggleSnackBar(snackbarObj);
     },
 
     cancel () {
       this.$emit('cancel');
+    },
+
+    getImgUrl (res) {
+      this.thumbnail = res.secure_url;
+      this.disable = false;
     }
   }
 }

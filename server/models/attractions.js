@@ -3,8 +3,9 @@ var Schema = mongoose.Schema;
 
 var attractionsSchema = new Schema({
   markerId: Number,
-  age: String,
+  level: String,
   content: String,
+  thumbnail: String,
   createdAt: {
     type: Date,
     "default": Date.now
