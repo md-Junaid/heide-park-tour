@@ -49,7 +49,7 @@ export default {
 
   data () {
     return {
-      alt: 'https://cdn.vuetifyjs.com/images/cards/docks.jpg'
+      alt: require('@/assets/hpr.jpg')
     }
   },
 
