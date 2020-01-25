@@ -11,7 +11,7 @@
       class="container mt-5"
       :width="$vuetify.breakpoint.mdAndUp ? '800px' : ''"
       flat
-      color="transparent"
+      color="transparent font-weight-medium subtitle-1"
     >
       <p>
         This web application is a Master's project for WISUG, our aim is to make users explore the Heide Park Resort beforehand and plan

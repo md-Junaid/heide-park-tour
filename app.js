@@ -12,7 +12,8 @@ const connectDB = require('./server/config/db');
 dotenv.config({ path: './.env' });
 
 // Body Parse
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: '50mb', extended: true }));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
 // Enable cors
 app.use(cors());

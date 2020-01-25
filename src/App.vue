@@ -42,7 +42,7 @@ export default {
   /* background-color: #EAEAE0; */
   /* background-color: rgba(165, 230, 157, 0.1); */
   /* background-size: cover; */
-  /* background-image: url("https://www.transparenttextures.com/patterns/arches.png"); */
+  /* background-image: url("./assets/leaves.png"); */
 }
 
 html{

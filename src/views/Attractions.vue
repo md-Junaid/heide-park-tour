@@ -1,15 +1,28 @@
 <template>
   <div class="mb-5">
     <v-sheet max-width="1200" class="mt-5 elevation-6" style="margin: 0 auto;">
-      <h2 class="text-center font-weight-regular container mt-4 green--text text--darken-2 custom-font" style="font-size:2.8125rem;">Tourist Attractions</h2>
+      <h2
+        class="text-center font-weight-regular container mt-4 green--text text--darken-2 custom-font"
+        :style="$vuetify.breakpoint.smAndDown ? 'font-size: 2.2rem;': 'font-size: 2.8125rem;'"
+      >Tourist Attractions</h2>
       <p style="" class="text-center subtitle-1 container text-justify">
         Welcome to Heide Park Tour's Attraction page, here you can get details for each tourist attraction offered by Heide
         Park Resort. Just use our search filters to get the details.
       </p>
+      <v-img
+        v-if="showAttraction && attraction.thumbnail"
+        class="white--text align-end"
+        height="400px"
+        gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.8)"
+        :src="attraction.thumbnail"
+      >
+      </v-img>
       <v-carousel
+        v-else
         cycle
         interval="6000"
         height="400"
+        continuous
       >
         <v-carousel-item
           v-for="(item,i) in carouselItems"
@@ -19,7 +32,7 @@
         <div class="overlay" style="width:100%; height: 100%"></div>
         </v-carousel-item>
       </v-carousel>
-      <v-divider class="mt-5 hr"></v-divider>
+      <v-divider v-if="!showAttraction" class="mt-5 hr"></v-divider>
       <v-container class="py-0" v-if="!showAttraction">
         <v-row align="center" class="ma-1 mb-0">
           <v-col class="d-flex" cols="12" sm="6">
@@ -36,7 +49,7 @@
               autofocus
               dense
               color="green darken-2"
-              hint="Select any place to know more about them"
+              hint="Filter attractions according to experience level"
               item-text="name"
               item-value="id"
               item-color="green darken-2"
@@ -73,11 +86,13 @@
         />
         <div v-else class="container">
           <v-row>
-            <v-btn text color="light-blue light-2 pl-0" @click="goBack()">
+            <v-btn v-show="!editAttraction" text color="light-blue light-2 pl-0" @click="goBack()">
               <v-icon>mdi-arrow-left-thick</v-icon> back
             </v-btn>
             <v-spacer></v-spacer>
-            <v-btn v-if="!editAttraction" color="light-blue darken-2 mr-5" dark @click="edit()">Edit</v-btn>
+            <h2 class="light-blue--text text--darken-2 custom-font">{{ attraction.tags.name }}</h2>
+            <v-spacer></v-spacer>
+            <v-btn v-show="!editAttraction" color="light-blue darken-2 mr-5" dark @click="edit()">Edit</v-btn>
           </v-row>
           <div v-if="editAttraction">
             <attractionEdit
@@ -113,6 +128,7 @@ export default {
 
   created () {
     this.fetchAttractions(this.getAllMarkers);
+    // this.fetchAttractionsPosts();
   },
 
   data () {
@@ -165,7 +181,7 @@ export default {
   },
 
   methods: {
-    ...mapActions(['fetchAttractions']),
+    ...mapActions(['fetchAttractions', 'fetchAttractionsPosts']),
 
     selectedItem (itemId) {
       this.selectedMarker = [];
@@ -189,10 +205,13 @@ export default {
     displayAttraction (attraction) {
       this.showAttraction = true;
       this.attraction = attraction;
+      const currentMarker = [attraction];
+      this.markers = currentMarker;
     },
 
     goBack () {
       this.showAttraction = false;
+      this.markers = this.getAttractions;
     },
 
     edit () {

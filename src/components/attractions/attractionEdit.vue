@@ -12,11 +12,12 @@
       </v-col>
       <v-col cols="12" sm="6" md="4">
         <v-text-field
-          label="Experience level"
+          label="Experience-Level"
           placeholder="Fill in the experience level for this attraction"
           :value="level"
           hint="Experience level can be relaxing, moderate, or wild"
           persistent-hint
+          outlined
         ></v-text-field>
       </v-col>
       <v-col cols="12" sm="6" md="4" class="pa-0 pb-3">
@@ -28,9 +29,9 @@
     <div>
       <tiptap-vuetify v-model="attraction.content" :extensions="extensions" :toolbar-attributes="{ color: 'light-blue darken-2', dark: true }" />
     </div>
-    <div class="text-right mt-5">
-      <v-btn color="grey darken-2" text :large="$vuetify.breakpoint.mdAndUp" @click="cancel()">cancel</v-btn>
-      <v-btn color="light-blue darken-2" :dark="!disable" :disabled="disable" :x-large="$vuetify.breakpoint.mdAndUp" @click.prevent="submit()">Submit</v-btn>
+    <div class="text-center mt-5">
+      <v-btn color="light-grey lighten-5 ma-1" :width="$vuetify.breakpoint.smAndUp ? '250': ''" :large="$vuetify.breakpoint.mdAndUp" @click="cancel()">cancel</v-btn>
+      <v-btn color="light-blue darken-2 ma-1" :width="$vuetify.breakpoint.smAndUp ? '250': ''" :disabled="disable" :dark="!disable" :large="$vuetify.breakpoint.mdAndUp" @click.once="submit()">Submit</v-btn>
     </div>
     <h3 class="mt-4 primary--text text-center">This is the preview of your post</h3>
     <v-divider/>

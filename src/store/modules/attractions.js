@@ -3,12 +3,14 @@ import router from '../../router/index';
 
 const state = {
   attractionsGeoJson: [],
-  allAttractionsPosts: []
+  allAttractionsPosts: [],
+  attractions: []
 };
 
 const getters = {
-  getAttractions: (state) => state.attractionsGeoJson,
-  getAllAttractionsPosts: (state) => state.allAttractionsPosts
+  getAttractionsMarkers: (state) => state.attractionsGeoJson,
+  getAllAttractionsPosts: (state) => state.allAttractionsPosts,
+  getAttractions: (state) => state.attractions
 };
 
 const mutations = {
@@ -19,6 +21,10 @@ const mutations = {
   mutateAttractionsPosts: (state, { attractionsPosts, dispatch }) => {
     state.allAttractionsPosts = attractionsPosts;
     dispatch('mergeAttractionsObjs');
+  },
+
+  attractionsWithFullInfo: (state, attractions) => {
+    state.attractions = attractions;
   }
 };
 
@@ -52,12 +58,12 @@ const actions = {
     const response = await ApiService.addPost(params);
     if (response.status === 201) {
       router.go({ name: 'Attractions' });
-      // dispatch('fetchAttractionsPosts');
     }
+    // dispatch('fetchAttractionsPosts');
   },
 
   mergeAttractionsObjs ({ commit, getters }) {
-    getters.getAttractions.forEach(marker => {
+    getters.getAttractionsMarkers.forEach(marker => {
       getters.getAllAttractionsPosts.forEach(post => {
         if (marker.id === post.markerId) {
           marker.content = post.content;
@@ -65,6 +71,8 @@ const actions = {
         }
       });
     });
+    const attractions = getters.getAttractionsMarkers;
+    commit('attractionsWithFullInfo', attractions);
   }
 };
 
