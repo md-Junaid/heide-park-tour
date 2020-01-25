@@ -37,8 +37,14 @@ export default {
 
   addPost (params) {
     return axios.post('api/attractions', params, {
-      headers: headers,
-      'Content-Type': 'multipart/form-data'
+      headers: headers
+    });
+  },
+
+  editPost (params) {
+    console.log("Apiservice: ", params);
+    return axios.put('api/attractions/' + params.postId, params, {
+      headers: headers
     });
   }
 };

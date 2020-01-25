@@ -62,12 +62,20 @@ const actions = {
     // dispatch('fetchAttractionsPosts');
   },
 
+  async editAttractionPost ({ dispatch }, params) {
+    const response = await ApiService.editPost(params);
+    if (response.status === 201) {
+      router.go({ name: 'Attractions' });
+    }
+  },
+
   mergeAttractionsObjs ({ commit, getters }) {
     getters.getAttractionsMarkers.forEach(marker => {
       getters.getAllAttractionsPosts.forEach(post => {
         if (marker.id === post.markerId) {
           marker.content = post.content;
           marker.thumbnail = post.thumbnail;
+          marker.postId = post._id;
         }
       });
     });

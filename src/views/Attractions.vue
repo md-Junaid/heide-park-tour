@@ -105,7 +105,7 @@
       </div>
       <commonMap
         :zoom="15"
-        :geo-locations-markers="markers"
+        :geo-locations-markers="showAttraction ? markers : getAttractions"
         :filter-on-map="false"
         :center-lat="53.0250"
         :center-lon="9.8784"
@@ -163,43 +163,11 @@ export default {
     })
   },
 
-  watch: {
-    selectedMarker: {
-      immediate: true,
-      handler (value) {
-        if (value.length === 0) {
-          this.markers = this.getAttractions;
-          this.content = `
-            <h1>PLACE NAME COMES HERE</h1>
-            <p>This is what will be visible to <strong>users</strong>. To add new info login</p>
-          `
-        } else {
-          this.markers = value;
-        }
-      }
-    }
-  },
-
   methods: {
     ...mapActions(['fetchAttractions', 'fetchAttractionsPosts']),
 
     selectedItem (itemId) {
-      this.selectedMarker = [];
-      if (itemId) {
-        this.getAttractions.forEach(elem => {
-          if (elem.id === itemId) {
-            this.selectedMarker.push(elem);
-            if (elem.content) {
-              this.content = elem.content
-            } else {
-              this.content = `
-                <h1>PLACE NAME COMES HERE</h1>
-                <p>This is what will be visible to <strong>users</strong>. To add new info login</p>
-              `
-            }
-          }
-        });
-      }
+      console.log(itemId);
     },
 
     displayAttraction (attraction) {
@@ -224,14 +192,6 @@ export default {
   },
 
   mounted () {
-    this.markers = this.getAttractions;
-    this.getAttractions.forEach(elem => {
-      const params = {
-        id: elem.id,
-        name: elem.tags.name
-      }
-      this.items.push(params);
-    });
     this.disableFilters = false;
   }
 }

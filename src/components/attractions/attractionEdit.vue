@@ -23,6 +23,7 @@
       <v-col cols="12" sm="6" md="4" class="pa-0 pb-3">
         <clUpload
           @res="getImgUrl"
+          :current-img="attraction.thumbnail"
           class="align" />
       </v-col>
     </v-row>
@@ -31,7 +32,8 @@
     </div>
     <div class="text-center mt-5">
       <v-btn color="light-grey lighten-5 ma-1" :width="$vuetify.breakpoint.smAndUp ? '250': ''" :large="$vuetify.breakpoint.mdAndUp" @click="cancel()">cancel</v-btn>
-      <v-btn color="light-blue darken-2 ma-1" :width="$vuetify.breakpoint.smAndUp ? '250': ''" :disabled="disable" :dark="!disable" :large="$vuetify.breakpoint.mdAndUp" @click.once="submit()">Submit</v-btn>
+      <v-btn v-if="attraction.postId" color="light-blue darken-2 ma-1" :width="$vuetify.breakpoint.smAndUp ? '250': ''" :disabled="disable" :dark="!disable" :large="$vuetify.breakpoint.mdAndUp" @click.once="eidtCurrentPost()">Edit</v-btn>
+      <v-btn v-else color="light-blue darken-2 ma-1" :width="$vuetify.breakpoint.smAndUp ? '250': ''" :disabled="disable" :dark="!disable" :large="$vuetify.breakpoint.mdAndUp" @click.once="submit()">Submit</v-btn>
     </div>
     <h3 class="mt-4 primary--text text-center">This is the preview of your post</h3>
     <v-divider/>
@@ -127,12 +129,17 @@ export default {
           this.show = true;
           this.attraction = value;
         }
+
+        if (value.thumbnail) {
+          this.disable = false;
+          this.thumbnail = value.thumbnail;
+        }
       }
     }
   },
 
   methods: {
-    ...mapActions(['addAttractionsPost', 'toggleSnackBar']),
+    ...mapActions(['addAttractionsPost', 'toggleSnackBar', 'editAttractionPost']),
 
     submit () {
       const params = {
@@ -141,32 +148,63 @@ export default {
         thumbnail: this.thumbnail,
         content: this.attraction.content
       };
-      var snackbarObj = {};
-      if (!params.content || params.thumbnail === null || params.level === "") {
-        snackbarObj.snackbar = true;
-        snackbarObj.snackbarColor = "error";
-        snackbarObj.msg = "Please fill in all the details & upload thumbnail(compressed).";
-      } else if (params.thumbnail.size > 1020000) {
-        snackbarObj.snackbar = true;
-        snackbarObj.snackbarColor = "error";
-        snackbarObj.msg = "Thumbnail size should be less than 1mb, please compress the image.";
-      } else {
-        snackbarObj.snackbar = true;
-        snackbarObj.snackbarColor = "primary";
-        snackbarObj.msg = "Your Post about this place has been saved successfully.";
-        console.log("before submit:", params)
+
+      var clearToSend = this.checkParams(params);
+      if (clearToSend) {
         this.addAttractionsPost(params);
+      } else {
+        console.log("Please fill everything and submit -_-");
       }
-      this.toggleSnackBar(snackbarObj);
     },
 
     cancel () {
       this.$emit('cancel');
     },
 
+    eidtCurrentPost () {
+      const params = {
+        markerId: this.attraction.id,
+        level: this.level,
+        thumbnail: this.thumbnail,
+        content: this.attraction.content,
+        postId: this.attraction.postId
+      };
+
+      var clearToSend = this.checkParams(params);
+      if (clearToSend) {
+        this.editAttractionPost(params);
+      } else {
+        console.log("Please fill everything and submit -_-");
+      }
+    },
+
     getImgUrl (res) {
       this.thumbnail = res.secure_url;
       this.disable = false;
+    },
+
+    checkParams (params) {
+      var snackbarObj = {};
+      if (!params.content || params.thumbnail === null || params.level === "") {
+        snackbarObj.snackbar = true;
+        snackbarObj.snackbarColor = "error";
+        snackbarObj.msg = "Please fill in all the details & upload thumbnail(compressed).";
+        this.toggleSnackBar(snackbarObj);
+        return false;
+      } else if (params.thumbnail.size > 1020000) {
+        snackbarObj.snackbar = true;
+        snackbarObj.snackbarColor = "error";
+        snackbarObj.msg = "Thumbnail size should be less than 1mb, please compress the image.";
+        this.toggleSnackBar(snackbarObj);
+        return false;
+      } else {
+        snackbarObj.snackbar = true;
+        snackbarObj.snackbarColor = "primary";
+        snackbarObj.msg = "Your Post about this place has been saved successfully.";
+        console.log("before submit:", params)
+        this.toggleSnackBar(snackbarObj);
+        return true;
+      }
     }
   }
 }

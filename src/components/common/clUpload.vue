@@ -4,10 +4,10 @@
       <progress-bar :options="options" :value="progress" />
     </div>
 
-    <v-btn text v-if="results" x-small style="float: right;" @click="remove()"><v-icon>mdi-close</v-icon></v-btn>
+    <v-btn text v-if="results || currentImg" x-small style="float: right;" @click="remove()"><v-icon>mdi-close</v-icon></v-btn>
     <!-- display uploaded image if successful -->
-    <section v-if="results && results.secure_url">
-      <img :src="results.secure_url" :alt="results.public_id" />
+    <section v-if="(results && results.secure_url) || currentImg">
+      <img :src="currentImg ? currentImg : results.secure_url" :alt="currentImg ? '' : results.public_id" />
     </section>
 
     <!-- create a form that will not submit to a server but will prevent submit and
@@ -77,6 +77,13 @@ export default {
       formData: null
     };
   },
+
+  props: {
+    currentImg: {
+      type: String
+    }
+  },
+
   methods: {
     remove: function () {
       this.results = null;
