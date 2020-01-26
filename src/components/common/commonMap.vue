@@ -104,7 +104,10 @@ export default {
       var geocoder = L.Control.Geocoder.nominatim();
       var myRoutingControl = L.Routing.control({
         router: new L.Routing.GraphHopper('2d392f0a-b556-487b-b072-0f54927a2ea7'),
-        waypoints: this.waypoints,
+        waypoints: [
+          this.start,
+          this.destination
+        ],
         routeWhileDragging: true,
         geocoder: geocoder
       }).addTo(mymap);
@@ -144,10 +147,8 @@ export default {
       show: true,
       markers: [],
       itineraryShown: false,
-      waypoints: [
-        L.latLng(this.waypointFromLat, this.waypointFromLon),
-        L.latLng(53.0227112, 9.8707054) // hamburg airpot bus stop Location: 53.6315628, 10.0069021
-      ],
+      start: L.latLng(53.6315628, 10.0069021), // hamburg airpot bus stop Location: 53.6315628, 10.0069021
+      destination: L.latLng(53.0227112, 9.8707054),
       center: L.latLng(this.centerLat, this.centerLon), // default geo: 53.0252, 9.8762?z=16
       url: 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
       attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
@@ -355,12 +356,25 @@ export default {
         }
       }
     },
+
     geoLocationsMarkers: {
       immediate: true,
       handler (value) {
         this.markers = value;
       }
     }
+
+    // start: {
+    //   immediate: true,
+    //   handler (value) {
+    //     console.log("change center: ", value.lng)
+    //     if ((value.lng === 10.0069021) && (value.lat === 53.6315628)) {
+    //       console.log("Do nothing");
+    //     } else {
+    //       this.center = value;
+    //     }
+    //   }
+    // }
   }
 }
 </script>

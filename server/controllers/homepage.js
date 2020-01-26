@@ -12,9 +12,9 @@ exports.getHomepage = (req, res, next) => {
     //   });
     // }).sort({_id:-1});
     Markers.find({}, function (error, markers) {
-      if (error) { 
+      if (error) {
         console.log(error);
-        res.status(404).json({ error: true, message: "GeoJson markers not found!"});
+        res.status(404).json({ error: true, message: "GeoJson markers not found!" });
       } else {
         res.send({
           markers: markers
