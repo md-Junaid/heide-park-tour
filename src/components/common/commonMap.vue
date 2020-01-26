@@ -16,24 +16,30 @@
       :lat-lng="computeLatLng(elem.geometry.coordinates[1], elem.geometry.coordinates[0])"
     >
       <l-popup>
-        <!-- <v-row class="justify-space-between align-center"> -->
-          <div class="subtitle-1 d-flex text-capitalize font-weight-bold mb-1 ml-3">
-            <p v-if="!elem.tags.name">
-              {{ elem.tags.amenity }}
-              {{ elem.tags.tourism }}
-            </p>
-            <p v-else>{{ elem.tags.name }}</p>
+        <div v-if="getUser.token">
+          <div class="subtitle-1 d-flex text-capitalize font-weight-bold green--text text--darken-2 mb-1 ml-3">
+            <p>{{ elem.tags.name }}</p>
           </div>
-          <v-chip v-if="getUser.token" class="mb-2">id: {{ elem.id }}</v-chip>
-        <!-- </v-row> -->
-        <table class="myTableTheme">
-          <tbody>
-            <tr v-for="(value, key) in elem.tags" :key="key" class="subtitle-2">
-              <td class="px-1">{{ key }}</td>
-              <td class="px-1">{{ value }}</td>
-            </tr>
-          </tbody>
-        </table>
+          <v-chip class="mb-2">id: {{ elem.id }}</v-chip>
+          <table class="myTableTheme">
+            <tbody>
+              <tr v-for="(value, key) in elem.tags" :key="key" class="subtitle-2">
+                <td class="px-1">{{ key }}</td>
+                <td class="px-1">{{ value }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div v-else>
+          <div class="subtitle-1 d-flex text-capitalize font-weight-bold green--text text--darken-2 mb-1 ml-3">
+            <p>{{ elem.tags.name }}</p>
+          </div>
+          <div><v-icon>mdi-human-child</v-icon>: {{ elem.age }}</div>
+          <div><v-icon>mdi-wheelchair-accessibility</v-icon>: {{ elem.tags.wheelchair }}</div>
+          <div class="mt-4">
+            <v-btn text :to="'/attractions'" class="light-blue--text">More info >></v-btn>
+          </div>
+        </div>
       </l-popup>
     </l-marker>
     <l-control v-if="filterOnMap" position="topleft" >
@@ -63,6 +69,9 @@
         </template>
       </v-combobox>
     </l-control>
+    <!-- <l-control position="topright">
+      <v-btn v-if="$vuetify.breakpoint.mdAndUp" color="success" @click="showContainer">To the Heide park</v-btn>
+    </l-control> -->
     <v-skeleton-loader
       type="image"
     ></v-skeleton-loader>
@@ -95,13 +104,23 @@ export default {
       var geocoder = L.Control.Geocoder.nominatim();
       var myRoutingControl = L.Routing.control({
         router: new L.Routing.GraphHopper('2d392f0a-b556-487b-b072-0f54927a2ea7'),
-        waypoints: [
-          L.latLng(this.waypointFromLat, this.waypointFromLon),
-          L.latLng(53.0227112, 9.8707054) // hamburg airpot bus stop Location: 53.6315628, 10.0069021
-        ],
+        waypoints: this.waypoints,
         routeWhileDragging: true,
         geocoder: geocoder
       }).addTo(mymap);
+
+      // var controlContainer = myRoutingControl.getContainer();
+      // var legendClickArea = document.createElement("DIV");
+      // console.log("control: ", controlContainer);
+      // legendClickArea.classList.add('legendClickArea');
+      // controlContainer.appendChild(legendClickArea);
+
+      // legendClickArea.onclick = function () {
+      //   if (this.itineraryShown) { myRoutingControl.show(); } else {
+      //     myRoutingControl.hide();
+      //   }
+      //   this.itineraryShown = !itineraryShown;
+      // };
       var router = myRoutingControl.getRouter();
       router.on('response', function (e) {
         // console.log('This routing request consumed ' + e.credits + ' credit(s)');
@@ -124,6 +143,11 @@ export default {
     return {
       show: true,
       markers: [],
+      itineraryShown: false,
+      waypoints: [
+        L.latLng(this.waypointFromLat, this.waypointFromLon),
+        L.latLng(53.0227112, 9.8707054) // hamburg airpot bus stop Location: 53.6315628, 10.0069021
+      ],
       center: L.latLng(this.centerLat, this.centerLon), // default geo: 53.0252, 9.8762?z=16
       url: 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
       attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
@@ -346,28 +370,29 @@ export default {
   @import '../../../node_modules/leaflet-control-geocoder/dist/Control.Geocoder.css';
 
 table.myTableTheme {
-  border: 1px solid #494949;
-  background-color: #494949;
+  border: 1px solid #0288D1;
+  background-color: #0288D1;
   width: 94%;
   text-align: left;
   border-collapse: collapse;
 }
 table.myTableTheme td, table.myTableTheme th {
-  /* border: 2px solid #494949; */
+  /* border: 2px solid #0288D1; */
   /* border-radius: 3px; */
-  padding: 10px 5px;
+  padding: 5px 5px;
 }
 table.myTableTheme td:first-child {
-  background-color: #494949;
+  background-color: #0288D1;
 }
 table.myTableTheme tbody td {
   font-size: 14px;
   color: #FFFFFF;
   max-width: 47%;
-  border: 1px solid #494949;
+  border: 1px solid #0288D1;
 }
 table.myTableTheme td:nth-child(even) {
-  background: #8F8F8F;
+  background: #E1F5FE;
+  color: black;
 }
 table.myTableTheme thead {
   background: #278AB0;
@@ -381,5 +406,8 @@ table.myTableTheme thead th {
 }
 table.myTableTheme thead th:first-child {
   border-left: none;
+}
+.leaflet-control-container .leaflet-routing-container-hide {
+    display: none;
 }
 </style>
