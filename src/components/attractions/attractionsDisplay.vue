@@ -5,7 +5,7 @@
       :key="index"
       cols="12"
       sm="6"
-      md="3"
+      :md="tour ? '2' : '3'"
     >
       <v-skeleton-loader
         class="mx-auto"
@@ -14,11 +14,11 @@
       >
         <v-card
           class="mx-auto mb-3"
-          max-width="400"
+          :max-width="tour ? '200' : '400'"
         >
           <v-img
             class="white--text align-end"
-            height="200px"
+            :height="tour ? '100px' : '200px'"
             gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.8)"
             :src="attraction.thumbnail? attraction.thumbnail: alt"
           >
@@ -28,12 +28,16 @@
           <!-- <v-card-subtitle class="pb-0">{{ attraction.tags.tourism }}</v-card-subtitle> -->
 
           <v-card-actions>
-            <v-chip>Level: <span class="light-blue--text text--darken-2">{{ attraction.level }}</span></v-chip>
-            <v-spacer></v-spacer>
+            <v-chip v-if="!tour">Level: <span class="light-blue--text text--darken-2">{{ attraction.level }}</span></v-chip>
+            <div v-else>
+              <span>{{ index + 1 }} </span>
+            </div>
+            <v-spacer v-if="!tour"></v-spacer>
             <v-btn
               color="green darken-2"
               text
               @click="open(attraction)"
+              v-if="!tour"
             >
               <span class="font-weight-bold">More Info </span><v-icon>mdi-arrow-right-thick</v-icon>
             </v-btn>
@@ -57,6 +61,9 @@ export default {
   props: {
     attractions: {
       type: Array
+    },
+    tour: {
+      type: Boolean
     }
   },
 

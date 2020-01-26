@@ -107,9 +107,9 @@ export default {
         },
         {
           id: 2,
-          text: 'Tour Planner',
-          page: '/myTour',
-          disable: true
+          text: 'Tour Packages',
+          page: '/planner',
+          disable: false
         }
       ]
     }

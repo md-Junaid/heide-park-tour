@@ -99,10 +99,15 @@ export default {
   name: 'commonMap',
 
   mounted () {
+    this.mymap = this.$refs.mapElement.mapObject;
     if (this.navigation) {
-      let mymap = this.$refs.mapElement.mapObject;
+      if (this.planner) {
+        this.start = null;
+        this.destination = null;
+      }
+
       var geocoder = L.Control.Geocoder.nominatim();
-      var myRoutingControl = L.Routing.control({
+      this.myRoutingControl = L.Routing.control({
         router: new L.Routing.GraphHopper('2d392f0a-b556-487b-b072-0f54927a2ea7'),
         waypoints: [
           this.start,
@@ -110,7 +115,11 @@ export default {
         ],
         routeWhileDragging: true,
         geocoder: geocoder
-      }).addTo(mymap);
+      }).addTo(this.mymap);
+
+      if (this.planner) {
+        this.myRoutingControl.hide();
+      }
 
       // var controlContainer = myRoutingControl.getContainer();
       // var legendClickArea = document.createElement("DIV");
@@ -124,7 +133,7 @@ export default {
       //   }
       //   this.itineraryShown = !itineraryShown;
       // };
-      var router = myRoutingControl.getRouter();
+      var router = this.myRoutingControl.getRouter();
       router.on('response', function (e) {
         // console.log('This routing request consumed ' + e.credits + ' credit(s)');
         // console.log('You have ' + e.remaining + ' left');
@@ -146,6 +155,8 @@ export default {
     return {
       show: true,
       markers: [],
+      mymap: null,
+      myRoutingControl: null,
       itineraryShown: false,
       start: L.latLng(53.6315628, 10.0069021), // hamburg airpot bus stop Location: 53.6315628, 10.0069021
       destination: L.latLng(53.0227112, 9.8707054),
@@ -207,6 +218,18 @@ export default {
     centerLon: {
       type: Number,
       default: 9.8762
+    },
+    planner: {
+      type: Boolean,
+      default: false
+    },
+    newStartPoint: {
+      type: Object,
+      default: null
+    },
+    newEndPoint: {
+      type: Object,
+      default: null
     }
   },
 
@@ -361,6 +384,40 @@ export default {
       immediate: true,
       handler (value) {
         this.markers = value;
+      }
+    },
+
+    centerLat: {
+      immediate: true,
+      handler (value) {
+        if ((value === null) || (this.mymap === null)) {
+          return;
+        }
+        this.center = L.latLng(value, this.centerLon);
+        this.mymap.panTo(this.center, {
+          animate: this.noBlockingAnimations ? false : null
+        });
+      }
+    },
+
+    newStartPoint: {
+      immediate: true,
+      handler (value) {
+        if (value) {
+          console.log("newStart: ", value)
+          this.start = value;
+        }
+      }
+    },
+
+    newEndPoint: {
+      immediate: true,
+      handler (value) {
+        if (value) {
+          console.log("end: ", value)
+
+          this.destination = value;
+        }
       }
     }
 
